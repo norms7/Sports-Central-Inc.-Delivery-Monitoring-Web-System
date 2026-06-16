@@ -626,14 +626,16 @@
 
   <!-- VIEW REPORT MODAL -->
   <div class="modal-overlay hidden" id="viewReportModal" onclick="closeViewModal()">
-    <div class="modal-container" onclick="event.stopPropagation()">
+    <div class="modal-container view-modal-content" onclick="event.stopPropagation()">
       <div class="modal-header">
         <span class="modal-icon">📋</span>
         <h3>Delivery Report Details</h3>
+        <button class="view-modal-close" onclick="closeViewModal()" aria-label="Close">✕</button>
       </div>
       <div class="view-modal-body" id="viewReportContent"></div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="closeViewModal()">Close</button>
+        <button class="btn btn-ghost" onclick="closeViewModal()">Close</button>
+        <button class="btn btn-warning" id="viewModalEditBtn" onclick="_viewModalEdit()">✏️ Edit Report</button>
       </div>
     </div>
   </div>
