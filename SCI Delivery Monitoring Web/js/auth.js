@@ -78,69 +78,54 @@ function getCurrentBranchId() {
 
 // ── Login ───────────────────────────────────────────────────
 async function login() {
-  const usernameEl = document.getElementById("username");
-  const passwordEl = document.getElementById("password");
-  const errorEl = document.getElementById("loginError");
-  const btnEl = document.querySelector(".btn-primary");
+  const usernameEl = document.getElementById('username');
+  const passwordEl = document.getElementById('password');
+  const errorEl    = document.getElementById('loginError');
+  const btnEl      = document.querySelector('.btn-primary');
 
-  const username = (usernameEl?.value || "").trim().toLowerCase();
-  const password = passwordEl?.value || "";
+  const username = (usernameEl?.value || '').trim().toLowerCase();
+  const password = passwordEl?.value || '';
 
   if (!username || !password) {
-    if (errorEl) {
-      errorEl.textContent = "Please enter username and password.";
-      errorEl.classList.remove("hidden");
-    }
+    if (errorEl) { errorEl.textContent = 'Please enter username and password.'; errorEl.classList.remove('hidden'); }
     return;
   }
 
-  const account = ACCOUNTS[username];
-  if (!account) {
-    if (errorEl) {
-      errorEl.textContent = "Invalid username or password.";
-      errorEl.classList.remove("hidden");
-    }
-    return;
-  }
-
-  // Show loading state
-  if (btnEl) {
-    btnEl.disabled = true;
-    btnEl.textContent = "⏳ Verifying...";
-  }
-  if (errorEl) errorEl.classList.add("hidden");
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = '⏳ Verifying...'; }
+  if (errorEl) errorEl.classList.add('hidden');
 
   try {
-    const _bcrypt = window.dcodeIO?.bcrypt || window.bcrypt;
-    const match = await _bcrypt.compare(password, account.hash);
+    // Fetch user from Supabase
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=username,branch_name,branch_code,label,password_hash`,
+      { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
+    );
+    const rows = await res.json();
+    const account = rows?.[0];
+
+    if (!account) {
+      if (errorEl) { errorEl.textContent = 'Invalid username or password.'; errorEl.classList.remove('hidden'); }
+      if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🔐 Login'; }
+      return;
+    }
+
+    const match = await bcrypt.compare(password, account.password_hash);
     if (match) {
       _sessionSet({
-        username: username,
-        branchName: account.branchName,
-        branchCode: account.branchCode,
-        label: account.label,
+        username:   account.username,
+        branchName: account.branch_name,
+        branchCode: account.branch_code,
+        label:      account.label
       });
-      window.location.href = "dashboard.html";
+      window.location.href = 'dashboard.html';
     } else {
-      if (errorEl) {
-        errorEl.textContent = "Invalid username or password.";
-        errorEl.classList.remove("hidden");
-      }
-      if (btnEl) {
-        btnEl.disabled = false;
-        btnEl.textContent = "🔐 Login";
-      }
+      if (errorEl) { errorEl.textContent = 'Invalid username or password.'; errorEl.classList.remove('hidden'); }
+      if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🔐 Login'; }
     }
-  } catch (err) {
-    console.error("Login error:", err);
-    if (errorEl) {
-      errorEl.textContent = "Login error. Please try again.";
-      errorEl.classList.remove("hidden");
-    }
-    if (btnEl) {
-      btnEl.disabled = false;
-      btnEl.textContent = "🔐 Login";
-    }
+  } catch(err) {
+    console.error('Login error:', err);
+    if (errorEl) { errorEl.textContent = 'Login error. Please try again.'; errorEl.classList.remove('hidden'); }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🔐 Login'; }
   }
 }
 
