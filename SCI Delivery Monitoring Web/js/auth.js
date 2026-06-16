@@ -35,7 +35,7 @@ function getCurrentUser() {
 /** Returns the branch_id (username) of the current user, used for DB filtering. */
 function getCurrentBranchId() {
   const u = _sessionGet();
-  return u ? u.username : null;
+  return u ? u.branchId : null;
 }
 
 // ── Login ───────────────────────────────────────────────────
@@ -59,7 +59,7 @@ async function login() {
   try {
     // Fetch user from Supabase
     const res = await fetch(
-      `${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=username,branch_name,branch_code,label,password_hash`,
+      `${SUPABASE_URL}/rest/v1/users?username=eq.${encodeURIComponent(username)}&select=username,branch_id,branch_name,branch_code,label,password_hash`,
       { headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` } }
     );
     const rows = await res.json();
@@ -75,6 +75,7 @@ async function login() {
     if (match) {
       _sessionSet({
         username:   account.username,
+        branchId:   account.branch_id,
         branchName: account.branch_name,
         branchCode: account.branch_code,
         label:      account.label
