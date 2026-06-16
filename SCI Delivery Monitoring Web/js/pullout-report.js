@@ -42,7 +42,7 @@ function resetPulloutForm() {
   addPulloutSI();
 }
 
-document.getElementById('pulloutDeliveryForm').addEventListener('submit', async function(e) {
+document.getElementById('pulloutDeliveryForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = this.querySelector('[type="submit"]');
   btn.disabled = true; btn.textContent = 'Saving...';

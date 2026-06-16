@@ -26,7 +26,7 @@ function removeSI(id) {
   else alert('At least one Sales Invoice is required!');
 }
 
-document.getElementById('deliveryForm').addEventListener('submit', async function(e) {
+document.getElementById('deliveryForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = this.querySelector('[type="submit"]');
   btn.disabled = true; btn.textContent = 'Saving...';

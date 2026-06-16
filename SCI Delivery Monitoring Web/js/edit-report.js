@@ -92,7 +92,7 @@ function cancelEdit() {
   showMonthView(currentMonth);
 }
 
-document.getElementById('editDeliveryForm').addEventListener('submit', async function(e) {
+document.getElementById('editDeliveryForm')?.addEventListener('submit', async function(e) {
   e.preventDefault();
   const btn = this.querySelector('[type="submit"]');
   btn.disabled = true; btn.textContent = 'Saving...';
