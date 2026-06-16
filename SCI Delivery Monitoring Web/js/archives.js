@@ -215,102 +215,50 @@ function viewReport(month, year, id) {
   const report = allMonthReports.find(r => r.id === id);
   if (!report) return;
 
-  // Store context for Edit button
   _viewingReport = { month, year, id };
 
-  // ── Type badge
-  const typeLabel = report.type === 'direct' ? '🚚 Direct' : report.type === 'transfer' ? '🔄 Transfer' : '📤 Pull-out';
-  const typeBadgeColor = report.type === 'direct' ? '#1d4ed8' : report.type === 'transfer' ? '#7c3aed' : '#b45309';
+  // General Info — same clean layout as before
+  let html = `<div class="detail-section">
+    <h4>📦 GENERAL INFORMATION</h4>
+    <div class="detail-row"><div class="detail-label">Brand</div><div class="detail-value">${report.brand}</div></div>
+    <div class="detail-row"><div class="detail-label">Delivery Date</div><div class="detail-value">${report.deliveryDate}</div></div>
+    <div class="detail-row"><div class="detail-label">Total Boxes</div><div class="detail-value">${report.totalBoxes}</div></div>
+    <div class="detail-row"><div class="detail-label">Category</div><div class="detail-value">${report.category}</div></div>
+  </div>`;
 
-  // ── General Info
-  let html = `
-    <div class="detail-section">
-      <h4>📦 General Information</h4>
-      <div class="detail-row">
-        <div class="detail-label">Brand</div>
-        <div class="detail-value" style="font-weight:800;font-size:15px;">${report.brand}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-label">Type</div>
-        <div class="detail-value">
-          <span style="background:${typeBadgeColor};color:#fff;padding:2px 10px;border-radius:999px;font-size:12px;font-weight:700;">${typeLabel}</span>
-        </div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-label">Date</div>
-        <div class="detail-value">${report.deliveryDate}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-label">Category</div>
-        <div class="detail-value">${report.category}</div>
-      </div>
-      <div class="detail-row">
-        <div class="detail-label">Total Boxes</div>
-        <div class="detail-value"><strong>${report.totalBoxes}</strong></div>
-      </div>
-      ${report.remarks ? `
-      <div class="detail-row">
-        <div class="detail-label">Remarks</div>
-        <div class="detail-value" style="color:#78716c;font-style:italic;">${report.remarks}</div>
-      </div>` : ''}
-    </div>`;
+  // Sales Invoices — same clean layout as before
+  html += `<div class="detail-section">
+    <h4>📋 SALES INVOICES (${report.salesInvoices.length})</h4>`;
 
-  // ── Sales Invoices / Transfer Receipts
-  const siLabel = report.type === 'direct' ? 'Sales Invoice' : 'Transfer Receipt';
   report.salesInvoices.forEach((si, i) => {
-    const variance  = si.actualUnits - si.siUnits;
-    const vClass    = variance >= 0 ? 'positive' : 'negative';
-    const vSign     = variance >= 0 ? '+' : '';
-    const totalVal  = Number(si.retailPrice || 0) * si.actualUnits;
+    const variance = si.actualUnits - si.siUnits;
+    const vColor   = variance >= 0 ? '#16a34a' : '#ef4444';
+    const poLabel  = report.type === 'direct' ? 'Purchase Order' : 'TR Number';
+    const siLabel  = report.type === 'direct' ? 'Invoice Number' : 'DR Number';
+    const poVal    = si.poNumber || si.trNumber || '—';
+    const siVal    = si.siNumber || si.drNumber || '—';
 
-    html += `
-    <div class="detail-section" style="border-left:3px solid ${typeBadgeColor};">
-      <h4>📋 ${siLabel} #${i + 1}</h4>
+    html += `<div class="si-card">
+      <div class="si-card-title">Sales Invoice #${i + 1}</div>
       <div class="si-detail-grid">
-        <div class="si-detail-item">
-          <strong>${report.type === 'direct' ? 'PO Number' : 'TR Number'}</strong>
-          <span>${si.poNumber || si.trNumber || '—'}</span>
-        </div>
-        <div class="si-detail-item">
-          <strong>${report.type === 'direct' ? 'SI Number' : 'DR Number'}</strong>
-          <span>${si.siNumber || si.drNumber || '—'}</span>
-        </div>
-        <div class="si-detail-item">
-          <strong>SI Units</strong>
-          <span>${si.siUnits}</span>
-        </div>
-        <div class="si-detail-item">
-          <strong>Actual Units</strong>
-          <span>${si.actualUnits}</span>
-        </div>
-        <div class="si-detail-item">
-          <strong>Variance</strong>
-          <span class="detail-value ${vClass}" style="font-weight:800;">${vSign}${variance}</span>
-        </div>
-        <div class="si-detail-item">
-          <strong>Retail Price / unit</strong>
-          <span>₱${Number(si.retailPrice || 0).toLocaleString('en-US', {minimumFractionDigits:2})}</span>
-        </div>
-      </div>
-      <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-size:12px;color:#64748b;font-weight:700;">TOTAL VALUE</span>
-        <span style="font-size:15px;font-weight:900;color:rgb(255,120,50);">₱${totalVal.toLocaleString('en-US', {minimumFractionDigits:2})}</span>
+        <div class="si-detail-item"><strong>${poLabel}</strong><span>${poVal}</span></div>
+        <div class="si-detail-item"><strong>${siLabel}</strong><span>${siVal}</span></div>
+        <div class="si-detail-item"><strong>SI Units</strong><span>${si.siUnits}</span></div>
+        <div class="si-detail-item"><strong>Actual Units</strong><span>${si.actualUnits}</span></div>
+        <div class="si-detail-item"><strong>Variance</strong><span style="color:${vColor};font-weight:800;">${variance >= 0 ? '' : ''}${variance}</span></div>
+        <div class="si-detail-item"><strong>Retail Price</strong><span>₱${Number(si.retailPrice||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
       </div>
     </div>`;
   });
 
-  // ── Footer meta
-  if (report.createdAt || report.updatedAt) {
-    html += `<div class="detail-section" style="background:transparent;border:1px dashed var(--border);">`;
-    if (report.createdAt) {
-      html += `<div class="detail-row"><div class="detail-label" style="color:#94a3b8;">Created</div>
-        <div class="detail-value" style="color:#94a3b8;font-size:12px;">${new Date(report.createdAt).toLocaleString()}</div></div>`;
-    }
-    if (report.updatedAt) {
-      html += `<div class="detail-row"><div class="detail-label" style="color:#94a3b8;">Last Updated</div>
-        <div class="detail-value" style="color:#94a3b8;font-size:12px;">${new Date(report.updatedAt).toLocaleString()}</div></div>`;
-    }
-    html += `</div>`;
+  html += `</div>`;
+
+  // Remarks — only if present
+  if (report.remarks && !report.remarks.includes('Imported from Annual Report')) {
+    html += `<div class="detail-section">
+      <h4>📝 REMARKS</h4>
+      <div class="detail-row"><div class="detail-value">${report.remarks}</div></div>
+    </div>`;
   }
 
   document.getElementById('viewReportContent').innerHTML = html;
@@ -322,7 +270,6 @@ function closeViewModal() {
   _viewingReport = null;
 }
 
-// Edit button inside view modal → triggers existing password-verify flow
 function _viewModalEdit() {
   if (!_viewingReport) return;
   closeViewModal();
