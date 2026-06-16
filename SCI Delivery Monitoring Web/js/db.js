@@ -31,7 +31,7 @@ async function _sbFetch(path, options = {}) {
 function _branchId() {
   const user = getCurrentUser();
   if (!user) throw new Error('Not authenticated');
-  return user._branchId;
+  return user.branchId;
 }
 
 // ── Shape converters ────────────────────────────────────────
