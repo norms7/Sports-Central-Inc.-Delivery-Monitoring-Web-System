@@ -7,44 +7,6 @@
 // ── Account registry ────────────────────────────────────────
 // Passwords are bcrypt hashes of '1234' (cost factor 10).
 // Generated with: bcrypt.hashSync('1234', 10)
-const ACCOUNTS = {
-  dssnl: {
-    hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u",
-    branchName: "DS San Lazaro",
-    branchCode: "6898",
-    label: "SCI DS San Lazaro - 6898",
-  },
-  dsmnl: {
-    hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u",
-    branchName: "DS Manila",
-    branchCode: "6891",
-    label: "SCI DS Manila - 6891",
-  },
-  dsgc: {
-    hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u",
-    branchName: "DS Grand Central",
-    branchCode: "6119",
-    label: "SCI DS Grand Central - 6119",
-  },
-  dsstm: {
-    hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u",
-    branchName: "DS ST. Mesa",
-    branchCode: "5",
-    label: "SCI DS ST. Mesa - 5",
-  },
-  dsfvw: {
-    hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u",
-    branchName: "DS Fairview",
-    branchCode: "8",
-    label: "SCI DS Fairview - 8",
-  },
-  dsqpo: {
-    hash: "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u",
-    branchName: "DS Quiapo",
-    branchCode: "2",
-    label: "SCI DS Quiapo - 2",
-  },
-};
 
 // ── Session helpers ─────────────────────────────────────────
 function _sessionGet() {
