@@ -1,0 +1,223 @@
+/* ================================
+   EXPORT PREVIEW MODAL
+   ================================ */
+
+.export-preview-modal {
+  max-width: 600px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.export-preview-body {
+  max-height: calc(85vh - 180px);
+  overflow-y: auto;
+}
+
+.export-info-section {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8fafc;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.export-info-section h4 {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin: 0 0 12px 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.export-detail-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.export-detail-row:last-child {
+  border-bottom: none;
+}
+
+.export-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #78716c;
+}
+
+.export-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  text-align: right;
+}
+
+.export-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.export-stat-card {
+  padding: 12px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.export-stat-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #78716c;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.export-stat-value {
+  font-size: 20px;
+  font-weight: 900;
+  color: var(--text);
+}
+
+.export-stat-card.highlight {
+  background: linear-gradient(135deg, rgb(255, 150, 79), rgb(255, 120, 50));
+  border-color: rgb(255, 120, 50);
+}
+
+.export-stat-card.highlight .export-stat-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.export-stat-card.highlight .export-stat-value {
+  color: #fff;
+  font-size: 18px;
+}
+
+.export-stat-card.positive {
+  background: #dcfce7;
+  border-color: #16a34a;
+}
+
+.export-stat-card.positive .export-stat-value {
+  color: #16a34a;
+}
+
+.export-stat-card.negative {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+.export-stat-card.negative .export-stat-value {
+  color: #ef4444;
+}
+
+.export-brand-breakdown {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.export-brand-chip {
+  padding: 6px 12px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.export-brand-chip strong {
+  color: rgb(255, 150, 79);
+  font-weight: 900;
+}
+
+.export-sheets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.export-sheet-item {
+  padding: 10px 12px;
+  background: #fff;
+  border: 2px solid #16a34a;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  color: #15803d;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .export-info-section {
+  background: #1c1917;
+}
+
+[data-theme="dark"] .export-detail-row {
+  border-bottom-color: #44403c;
+}
+
+[data-theme="dark"] .export-stat-card {
+  background: #1c1917;
+}
+
+[data-theme="dark"] .export-stat-card.positive {
+  background: #14532d;
+}
+
+[data-theme="dark"] .export-stat-card.negative {
+  background: #450a0a;
+}
+
+[data-theme="dark"] .export-brand-chip {
+  background: #1c1917;
+}
+
+[data-theme="dark"] .export-sheet-item {
+  background: #1c1917;
+  color: #16a34a;
+}
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+  .export-stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .export-stat-value {
+    font-size: 18px;
+  }
+}
+
+/* ================================
+   THEME TRANSITION OVERLAY
+   ================================ */
+
+.theme-transition-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+  overflow: hidden;
+}
+
+.theme-transition-circle {
+  position: absolute;
+  border-radius: 50%;
+  transform: scale(0);
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+              opacity 0.4s ease-out;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+
+.theme-transition-circle.active {
+  transform: scale(1);
+}

@@ -1,0 +1,475 @@
+/* ================================
+   TABLE HORIZONTAL SCROLL
+   ================================ */
+
+.table-scroll-wrapper {
+  overflow-x: auto;
+  margin: 12px 0;
+  border-radius: var(--radius);
+  border: 2px solid var(--border);
+}
+
+.table-scroll-wrapper::-webkit-scrollbar {
+  height: 10px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 10px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: rgb(255, 150, 79);
+  border-radius: 10px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgb(255, 120, 50);
+}
+
+[data-theme="dark"] .table-scroll-wrapper::-webkit-scrollbar-track {
+  background: #1c1917;
+}
+
+/* Make table full width inside scroll wrapper */
+.table-scroll-wrapper table {
+  margin: 0;
+  border: none;
+  width: 100%;
+  table-layout: fixed; /* Fixed table layout for consistent column widths */
+}
+
+/* Column width settings for better wrapping */
+.table-scroll-wrapper table th:nth-child(1) { width: 50px; }   /* # */
+.table-scroll-wrapper table th:nth-child(2) { width: 100px; }  /* Date */
+.table-scroll-wrapper table th:nth-child(3) { width: 150px; }  /* PO/TR - wrapped */
+.table-scroll-wrapper table th:nth-child(4) { width: 120px; }  /* Brand */
+.table-scroll-wrapper table th:nth-child(5) { width: 150px; }  /* SI/DR - wrapped */
+.table-scroll-wrapper table th:nth-child(6) { width: 100px; }  /* Total Units */
+.table-scroll-wrapper table th:nth-child(7) { width: 100px; }  /* Variance */
+.table-scroll-wrapper table th:nth-child(8) { width: 130px; }  /* Retail Price */
+.table-scroll-wrapper table th:nth-child(9) { width: 130px; }  /* Category */
+.table-scroll-wrapper table th:nth-child(10) { width: 160px; } /* Actions */
+
+/* Word wrap for PO/TR and SI/DR columns */
+.table-scroll-wrapper table td:nth-child(3),
+.table-scroll-wrapper table td:nth-child(5) {
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  max-width: 150px;
+}
+
+/* ================================
+   SUMMARY SECTION
+   ================================ */
+
+.summary-section {
+  margin-top: 24px;
+  padding: 20px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.summary-header {
+  margin-bottom: 16px;
+}
+
+.summary-header h3 {
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  transition: all .3s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(255, 150, 79, 0.2);
+}
+
+.summary-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.summary-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: #1c1917;
+}
+
+.summary-card.highlight {
+  background: linear-gradient(135deg, rgb(255, 150, 79), rgb(255, 120, 50));
+  border-color: rgb(255, 120, 50);
+}
+
+.summary-card.highlight .summary-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.summary-card.highlight .summary-value {
+  color: #fff;
+  font-size: 24px;
+}
+
+.summary-card.positive {
+  background: #dcfce7;
+  border-color: #16a34a;
+}
+
+.summary-card.positive .summary-value {
+  color: #16a34a;
+}
+
+.summary-card.negative {
+  background: #fee2e2;
+  border-color: #ef4444;
+}
+
+.summary-card.negative .summary-value {
+  color: #ef4444;
+}
+
+/* Brand Breakdown */
+.brand-breakdown {
+  padding-top: 16px;
+  border-top: 2px solid var(--border);
+}
+
+.breakdown-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: #78716c;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.breakdown-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.breakdown-chip {
+  padding: 8px 14px;
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 600;
+}
+
+.breakdown-chip strong {
+  color: rgb(255, 150, 79);
+  font-weight: 900;
+}
+
+/* Dark Mode Summary */
+[data-theme="dark"] .summary-section {
+  background: #292524;
+}
+
+[data-theme="dark"] .summary-card {
+  background: #1c1917;
+}
+
+[data-theme="dark"] .summary-value {
+  color: #fafaf9;
+}
+
+[data-theme="dark"] .summary-card.positive {
+  background: #14532d;
+  border-color: #16a34a;
+}
+
+[data-theme="dark"] .summary-card.negative {
+  background: #450a0a;
+  border-color: #ef4444;
+}
+
+[data-theme="dark"] .breakdown-chip {
+  background: #1c1917;
+  color: #fafaf9;
+}
+
+/* Variance column styling */
+td.positive {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+td.negative {
+  color: #ef4444;
+  font-weight: 700;
+}
+
+/* Mobile adjustments */
+@media (max-width: 720px) {
+  .summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .summary-value {
+    font-size: 22px;
+  }
+  
+  .summary-card.highlight .summary-value {
+    font-size: 20px;
+  }
+}
+
+/* SI Index Badge - shows position within a multi-SI report */
+.si-index-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #78716c;
+  background: rgba(255, 150, 79, 0.12);
+  border: 1px solid rgba(255, 150, 79, 0.3);
+  border-radius: 8px;
+  padding: 1px 6px;
+  margin-left: 4px;
+  vertical-align: middle;
+}
+
+/* =====================================================
+   VARIANCE DETAIL TABLE (Monthly Analytics)
+   ===================================================== */
+
+.variance-brand-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 14px 0 18px 0;
+  border-bottom: 1.5px solid var(--border);
+  margin-bottom: 16px;
+}
+
+.variance-brand-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f8fafc;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+
+.vbc-brand {
+  font-weight: 800;
+  color: var(--text);
+}
+
+.vbc-variance {
+  font-weight: 700;
+  font-size: 13px;
+}
+
+.variance-table-wrapper {
+  overflow-x: auto;
+}
+
+.variance-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.variance-detail-table thead tr {
+  background: rgba(255, 150, 79, 0.08);
+}
+
+.variance-detail-table th {
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #78716c;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.variance-detail-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.variance-detail-table tbody tr:hover {
+  background: rgba(255, 150, 79, 0.04);
+}
+
+/* Variance cell states */
+.vt-positive { color: #16a34a; }
+.vt-negative { color: #ef4444; }
+.vt-zero     { color: #78716c; }
+
+/* Accuracy badge (shared by monthly + annual) */
+.variance-acc-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* Remarks pill */
+.vt-remarks {
+  display: inline-block;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1.5px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: #2563eb;
+  cursor: default;
+  max-width: 260px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+}
+
+/* =====================================================
+   ANNUAL VARIANCE DETAIL TABLE (Expandable)
+   ===================================================== */
+
+.av-table-wrapper {
+  overflow-x: auto;
+}
+
+.av-summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.av-summary-table thead tr {
+  background: rgba(255, 150, 79, 0.08);
+}
+
+.av-summary-table th {
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #78716c;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+
+.av-summary-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.av-month-row.av-clickable {
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.av-month-row.av-clickable:hover {
+  background: rgba(255, 150, 79, 0.07);
+}
+
+.av-month-row.av-empty-month td {
+  color: #a8a29e;
+}
+
+.av-expand-icon {
+  font-size: 11px;
+  color: rgb(255, 107, 0);
+  width: 24px;
+  text-align: center;
+  user-select: none;
+}
+
+/* Expanded detail sub-table */
+.av-detail-row td {
+  padding: 0 !important;
+  border-bottom: 2px solid rgb(255, 150, 79) !important;
+}
+
+.av-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  background: #fafaf9;
+}
+
+.av-detail-table thead tr {
+  background: rgba(255, 150, 79, 0.12);
+}
+
+.av-detail-table th {
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #78716c;
+  border-bottom: 1.5px solid var(--border);
+  white-space: nowrap;
+}
+
+.av-detail-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.av-detail-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.av-detail-table tbody tr:hover {
+  background: rgba(255, 150, 79, 0.04);
+}
+
+/* Dark mode */
+[data-theme="dark"] .variance-brand-chip { background: #292524; }
+[data-theme="dark"] .variance-detail-table th { color: #a8a29e; }
+[data-theme="dark"] .variance-detail-table td { color: #fafaf9; }
+[data-theme="dark"] .av-detail-table { background: #1c1917; }
+[data-theme="dark"] .av-detail-table th { color: #a8a29e; }
+[data-theme="dark"] .av-detail-table td { color: #fafaf9; }
+[data-theme="dark"] .vt-remarks { background: rgba(59,130,246,0.12); color: #93c5fd; border-color: rgba(59,130,246,0.25); }

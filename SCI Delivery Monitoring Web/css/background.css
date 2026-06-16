@@ -1,0 +1,294 @@
+/* ================================
+   CREATIVE CLOUD BACKGROUND
+   ================================ */
+
+/* Cloud Container */
+.clouds {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Individual Cloud */
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 100px;
+  opacity: 0.6;
+  animation: float linear infinite;
+}
+
+/* Cloud shapes using pseudo-elements */
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 100px;
+}
+
+.cloud::before {
+  width: 50px;
+  height: 50px;
+  top: -25px;
+  left: 10px;
+}
+
+.cloud::after {
+  width: 60px;
+  height: 60px;
+  top: -30px;
+  right: 10px;
+}
+
+/* Cloud 1 - Large */
+.cloud-1 {
+  width: 200px;
+  height: 60px;
+  top: 15%;
+  left: -200px;
+  animation-duration: 35s;
+  animation-delay: 0s;
+}
+
+/* Cloud 2 - Medium */
+.cloud-2 {
+  width: 150px;
+  height: 50px;
+  top: 30%;
+  left: -150px;
+  animation-duration: 45s;
+  animation-delay: 10s;
+}
+
+/* Cloud 3 - Small */
+.cloud-3 {
+  width: 120px;
+  height: 40px;
+  top: 50%;
+  left: -120px;
+  animation-duration: 55s;
+  animation-delay: 20s;
+}
+
+/* Cloud 4 - Large */
+.cloud-4 {
+  width: 180px;
+  height: 55px;
+  top: 70%;
+  left: -180px;
+  animation-duration: 40s;
+  animation-delay: 15s;
+}
+
+/* Cloud 5 - Medium */
+.cloud-5 {
+  width: 160px;
+  height: 50px;
+  top: 85%;
+  left: -160px;
+  animation-duration: 48s;
+  animation-delay: 5s;
+}
+
+/* Cloud 6 - Extra */
+.cloud-6 {
+  width: 140px;
+  height: 45px;
+  top: 40%;
+  left: -140px;
+  animation-duration: 50s;
+  animation-delay: 25s;
+}
+
+/* Float animation */
+@keyframes float {
+  0% {
+    left: -250px;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Dark Mode Clouds */
+[data-theme="dark"] .cloud {
+  background: rgba(68, 64, 60, 0.4);
+}
+
+[data-theme="dark"] .cloud::before,
+[data-theme="dark"] .cloud::after {
+  background: rgba(68, 64, 60, 0.4);
+}
+
+/* Ensure content is above clouds */
+.app-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-toggle {
+  z-index: 1001;
+}
+
+/* Subtle glow effect on clouds */
+.cloud {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .cloud {
+  box-shadow: 0 0 20px rgba(255, 150, 79, 0.1);
+}
+
+/* Add some variety to cloud opacity */
+.cloud-1 { opacity: 0.5; }
+.cloud-2 { opacity: 0.6; }
+.cloud-3 { opacity: 0.7; }
+.cloud-4 { opacity: 0.55; }
+.cloud-5 { opacity: 0.65; }
+.cloud-6 { opacity: 0.6; }
+
+/* ================================
+   FLOATING PARTICLES
+   ================================ */
+
+/* Particle container */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  clip-path: inset(0 0 0 0); /* Ensure particles are clipped */
+}
+
+/* Individual particles */
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 50%;
+  animation: rise linear infinite;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+/* Particle positions and animations */
+.particle-1 {
+  left: 10%;
+  animation-duration: 15s;
+  animation-delay: 0s;
+}
+
+.particle-2 {
+  left: 25%;
+  animation-duration: 20s;
+  animation-delay: 2s;
+}
+
+.particle-3 {
+  left: 40%;
+  animation-duration: 18s;
+  animation-delay: 4s;
+}
+
+.particle-4 {
+  left: 55%;
+  animation-duration: 22s;
+  animation-delay: 1s;
+}
+
+.particle-5 {
+  left: 70%;
+  animation-duration: 17s;
+  animation-delay: 3s;
+}
+
+.particle-6 {
+  left: 85%;
+  animation-duration: 19s;
+  animation-delay: 5s;
+}
+
+.particle-7 {
+  left: 15%;
+  animation-duration: 21s;
+  animation-delay: 6s;
+}
+
+.particle-8 {
+  left: 60%;
+  animation-duration: 16s;
+  animation-delay: 2.5s;
+}
+
+/* Rise animation */
+@keyframes rise {
+  0% {
+    bottom: -10px;
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  95% {
+    opacity: 0;
+  }
+  100% {
+    bottom: 100%;
+    opacity: 0;
+  }
+}
+
+/* Dark mode particles */
+[data-theme="dark"] .particle {
+  background: rgba(255, 150, 79, 0.8);
+  box-shadow: 0 0 10px rgba(255, 150, 79, 0.6);
+}
+
+/* Glow effect on login card */
+.login-card {
+  box-shadow: 
+    var(--shadow),
+    0 0 40px rgba(255, 150, 79, 0.15);
+}
+
+[data-theme="dark"] .login-card {
+  box-shadow: 
+    var(--shadow),
+    0 0 60px rgba(255, 150, 79, 0.2);
+}
+
+/* Enhance the overall atmosphere */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(255, 180, 100, 0.1), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255, 150, 79, 0.1), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(255, 120, 50, 0.1), transparent 40%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+[data-theme="dark"] body::before {
+  background: 
+    radial-gradient(circle at 30% 20%, rgba(255, 150, 79, 0.05), transparent 40%),
+    radial-gradient(circle at 70% 60%, rgba(255, 120, 50, 0.05), transparent 40%),
+    radial-gradient(circle at 50% 80%, rgba(255, 150, 79, 0.05), transparent 40%);
+}

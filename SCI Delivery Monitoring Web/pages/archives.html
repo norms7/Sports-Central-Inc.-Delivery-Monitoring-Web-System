@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Archives | SCI DS San Lazaro - 6898</title>
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <link rel="shortcut icon" type="image/png" href="../images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/background.css">
+  <link rel="stylesheet" href="../css/tables.css">
+  <link rel="stylesheet" href="../css/modals.css">
+  <link rel="stylesheet" href="../css/analytics.css">
+  <link rel="stylesheet" href="../css/annual-analytics.css">
+</head>
+<body>
+<div class="clouds">
+  <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div><div class="cloud cloud-4"></div>
+  <div class="cloud cloud-5"></div><div class="cloud cloud-6"></div>
+</div>
+<div class="particles">
+  <div class="particle particle-1"></div><div class="particle particle-2"></div>
+  <div class="particle particle-3"></div><div class="particle particle-4"></div>
+  <div class="particle particle-5"></div><div class="particle particle-6"></div>
+  <div class="particle particle-7"></div><div class="particle particle-8"></div>
+</div>
+<div class="theme-transition-overlay" id="themeTransitionOverlay"></div>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <span class="sun-icon">☀️</span>
+  <span class="moon-icon">🌙</span>
+</button>
+
+<div class="app-wrap">
+  <div id="archivesPage" class="card">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong>Monthly Archives</strong>
+            <span>Browse by year and month</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-primary btn-small" onclick="showAnnualAnalytics()">📅 Annual Analytics</button>
+          <button class="btn btn-secondary btn-small" onclick="showDashboard()">⬅ Back to Dashboard</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="archive-tools">
+          <div>
+            <h2 style="font-size:16px;">📁 Archives</h2>
+            <div class="hint">Select a year to view deliveries.</div>
+          </div>
+
+          <div class="year-picker">
+            <label for="yearSelect" style="font-size:12px; font-weight:800; color:#334155;">Year</label>
+            <select id="yearSelect" onchange="loadMonthGrid()" style="min-width: 140px;"></select>
+          </div>
+        </div>
+
+        <div class="month-grid" id="monthGrid"></div>
+      </div>
+    </div>
+
+  <!-- ANNUAL ANALYTICS PAGE -->
+    <div id="annualAnalyticsPage" class="card hidden">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong id="annualAnalyticsTitle">📅 Annual Analytics</strong>
+            <span id="annualAnalyticsSubtitle">Full-year visual insights</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="btn btn-secondary btn-small" onclick="backFromAnnualAnalytics()">⬅ Back to Archives</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+
+        <!-- Year Selector -->
+        <div class="annual-year-selector">
+          <label style="font-size:13px; font-weight:800; color:#334155;">Viewing Year:</label>
+          <select id="annualYearSelect" onchange="generateAnnualAnalytics()" style="min-width:140px;"></select>
+          <button class="btn btn-secondary btn-small" style="margin-left:auto;" onclick="requestImportAnnualData()">📤 Import Annual Report</button>
+          <button class="btn btn-secondary btn-small" onclick="requestRemoveDuplicates()">🧹 Remove Duplicates</button>
+          <button class="btn btn-primary btn-small" onclick="exportAnnualToExcel()">📥 Export Annual Report</button>
+          <input type="file" id="annualImportFileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleAnnualImportFile(event)" />
+        </div>
+
+        <!-- KPI Banner -->
+        <div class="annual-kpi-banner">
+          <div class="annual-kpi-card">
+            <div class="annual-kpi-icon">📦</div>
+            <div class="annual-kpi-info">
+              <div class="annual-kpi-label">Total Deliveries</div>
+              <div class="annual-kpi-value" id="annualMetricDeliveries">0</div>
+            </div>
+          </div>
+          <div class="annual-kpi-card">
+            <div class="annual-kpi-icon">📊</div>
+            <div class="annual-kpi-info">
+              <div class="annual-kpi-label">Total Units</div>
+              <div class="annual-kpi-value" id="annualMetricUnits">0</div>
+            </div>
+          </div>
+          <div class="annual-kpi-card">
+            <div class="annual-kpi-icon">📈</div>
+            <div class="annual-kpi-info">
+              <div class="annual-kpi-label">Net Variance</div>
+              <div class="annual-kpi-value" id="annualMetricVariance">0</div>
+            </div>
+          </div>
+          <div class="annual-kpi-card">
+            <div class="annual-kpi-icon">🎯</div>
+            <div class="annual-kpi-info">
+              <div class="annual-kpi-label">Avg Accuracy</div>
+              <div class="annual-kpi-value" id="annualMetricAccuracy">0%</div>
+            </div>
+          </div>
+          <div class="annual-kpi-card annual-kpi-highlight">
+            <div class="annual-kpi-info">
+              <div class="annual-kpi-label">Total Retail Value</div>
+              <div class="annual-kpi-value" id="annualMetricValue">₱0</div>
+            </div>
+          </div>
+          <div class="annual-kpi-card annual-kpi-peak">
+            <div class="annual-kpi-icon">🔥</div>
+            <div class="annual-kpi-info">
+              <div class="annual-kpi-label">Peak Month</div>
+              <div class="annual-kpi-value" id="annualMetricPeak">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="annual-charts-grid">
+
+          <!-- Monthly Volume Trend (full width) -->
+          <div class="annual-chart-container annual-full-width">
+            <div class="annual-chart-header">
+              <div>
+                <h3>📆 Monthly Delivery Volume</h3>
+                <p>Total deliveries per month across the year — spot seasonal peaks</p>
+              </div>
+              <div class="annual-chart-badge">Trend</div>
+            </div>
+            <div class="annual-chart-wrapper" style="height:320px;">
+              <canvas id="annualMonthlyVolumeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Monthly Units Trend (full width) -->
+          <div class="annual-chart-container annual-full-width">
+            <div class="annual-chart-header">
+              <div>
+                <h3>📦 Monthly Units Shipped</h3>
+                <p>Total units processed per month — demand volume over time</p>
+              </div>
+              <div class="annual-chart-badge">Units</div>
+            </div>
+            <div class="annual-chart-wrapper" style="height:320px;">
+              <canvas id="annualMonthlyUnitsChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Brand Performance Heatmap-style bar (full width) -->
+          <div class="annual-chart-container annual-full-width">
+            <div class="annual-chart-header">
+              <div>
+                <h3>🏷️ Brand Performance Over the Year</h3>
+                <p>Stacked monthly deliveries broken down by brand</p>
+              </div>
+              <div class="annual-chart-badge">Brands</div>
+            </div>
+            <div class="annual-chart-wrapper" style="height:360px;">
+              <canvas id="annualBrandStackedChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Annual Variance Detail Table -->
+          <div class="annual-chart-container annual-full-width">
+            <div class="annual-chart-header">
+              <div>
+                <h3>📋 Annual Variance Detail by Month</h3>
+                <p>Month-by-month breakdown — click a month to expand individual SI records</p>
+              </div>
+              <div class="annual-chart-badge">Accuracy</div>
+            </div>
+            <div id="annualVarianceDetailTable"></div>
+          </div>
+
+          <!-- Brand total deliveries (donut) -->
+          <div class="annual-chart-container">
+            <div class="annual-chart-header">
+              <div>
+                <h3>🥧 Annual Brand Share</h3>
+                <p>Total deliveries per brand for the full year</p>
+              </div>
+              <div class="annual-chart-badge">Mix</div>
+            </div>
+            <div class="annual-chart-wrapper">
+              <canvas id="annualBrandShareChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Category donut -->
+          <div class="annual-chart-container">
+            <div class="annual-chart-header">
+              <div>
+                <h3>📦 Annual Category Mix</h3>
+                <p>Product category distribution across all deliveries</p>
+              </div>
+              <div class="annual-chart-badge">Categories</div>
+            </div>
+            <div class="annual-chart-wrapper">
+              <canvas id="annualCategoryChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Delivery Type pie -->
+          <div class="annual-chart-container">
+            <div class="annual-chart-header">
+              <div>
+                <h3>🚚 Delivery Type Distribution</h3>
+                <p>Direct vs Transfer vs Pullout for the full year</p>
+              </div>
+              <div class="annual-chart-badge">Types</div>
+            </div>
+            <div class="annual-chart-wrapper">
+              <canvas id="annualTypeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Brand accuracy radar -->
+          <div class="annual-chart-container">
+            <div class="annual-chart-header">
+              <div>
+                <h3>🎯 Brand Accuracy Radar</h3>
+                <p>Delivery accuracy % per brand — closer to 100% is better</p>
+              </div>
+              <div class="annual-chart-badge">Radar</div>
+            </div>
+            <div class="annual-chart-wrapper">
+              <canvas id="annualBrandRadarChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Annual Value by Brand (full width) -->
+          <div class="annual-chart-container annual-full-width">
+            <div class="annual-chart-header">
+              <div>
+                <h3>💰 Annual Retail Value by Brand</h3>
+                <p>Total retail value contributed per brand across all 12 months</p>
+              </div>
+              <div class="annual-chart-badge">Value</div>
+            </div>
+            <div class="annual-chart-wrapper" style="height:320px;">
+              <canvas id="annualBrandValueChart"></canvas>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Summary Tables Row -->
+        <div class="annual-tables-row">
+
+          <!-- Monthly Summary Table -->
+          <div class="annual-table-card">
+            <div class="annual-chart-header">
+              <div>
+                <h3>📋 Monthly Summary Table</h3>
+                <p>Key metrics for every month at a glance</p>
+              </div>
+            </div>
+            <div class="annual-table-wrapper">
+              <table class="annual-summary-table" id="annualMonthlySummaryTable">
+                <thead>
+                  <tr>
+                    <th>Month</th>
+                    <th>Deliveries</th>
+                    <th>Units</th>
+                    <th>Variance</th>
+                    <th>Accuracy</th>
+                    <th>Value</th>
+                  </tr>
+                </thead>
+                <tbody id="annualMonthlySummaryBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Brand Leaderboard -->
+          <div class="annual-table-card">
+            <div class="annual-chart-header">
+              <div>
+                <h3>🏆 Brand Leaderboard</h3>
+                <p>Ranked by annual accuracy score</p>
+              </div>
+            </div>
+            <div class="annual-leaderboard" id="annualBrandLeaderboard"></div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  <!-- ANALYTICS PAGE -->
+    <div id="analyticsPage" class="card hidden">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong id="analyticsTitle">📊 Analytics</strong>
+            <span id="analyticsSubtitle">Visual insights and trends</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-secondary btn-small" onclick="backFromAnalytics()">⬅ Back</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Key Metrics Cards -->
+        <div class="analytics-metrics">
+          <div class="metric-card">
+            <div class="metric-icon">📦</div>
+            <div class="metric-info">
+              <div class="metric-label">Total Deliveries</div>
+              <div class="metric-value" id="metricDeliveries">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <div class="metric-info">
+              <div class="metric-label">Total Units</div>
+              <div class="metric-value" id="metricUnits">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">📈</div>
+            <div class="metric-info">
+              <div class="metric-label">Variance</div>
+              <div class="metric-value" id="metricVariance">0</div>
+            </div>
+          </div>
+          <div class="metric-card highlight">
+            <div class="metric-info">
+              <div class="metric-label">Total Value</div>
+              <div class="metric-value" id="metricValue">₱0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+          <!-- Deliveries by Brand Chart -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>📊 Deliveries by Brand</h3>
+              <p>Number of deliveries per brand</p>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="brandChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Category Distribution Chart -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>📦 Category Distribution</h3>
+              <p>Breakdown by product category</p>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="categoryChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Variance Detail Table -->
+          <div class="chart-container full-width">
+            <div class="chart-header">
+              <h3>📋 Variance Detail by Delivery</h3>
+              <p>Per-SI breakdown with remarks — sorted by variance magnitude</p>
+            </div>
+            <div id="varianceDetailTable"></div>
+          </div>
+
+          <!-- Retail Value by Brand Chart -->
+          <div class="chart-container full-width">
+            <div class="chart-header">
+              <h3>💰 Retail Value by Brand</h3>
+              <p>Total retail price per brand</p>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="valueChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Delivery Type Distribution -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>🚚 Delivery Types</h3>
+              <p>Direct vs Transfer vs Pullout</p>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="typeChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Top Performers Table -->
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>🏆 Top Performers</h3>
+              <p>Most accurate deliveries</p>
+            </div>
+            <div class="top-performers-list" id="topPerformers"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <!-- MONTH VIEW -->
+    <div id="monthViewPage" class="card hidden">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong id="monthTitle">📦 Reports</strong>
+            <span id="monthSubtitle">Month details</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-secondary btn-small" onclick="showAnalytics()">📊 Analytics</button>
+          <button class="btn btn-secondary btn-small" onclick="showArchives()">⬅ Back</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Brand Filter Section -->
+        <div class="filter-section">
+          <div class="filter-title">🏷️ Filter by Brand</div>
+          <div class="brand-filters">
+            <div class="brand-chip all active" onclick="filterByBrand('All')">All Brands</div>
+            <div class="brand-chip" onclick="filterByBrand('Nike')">Nike</div>
+            <div class="brand-chip" onclick="filterByBrand('Adidas')">Adidas</div>
+            <div class="brand-chip" onclick="filterByBrand('Under Armour')">Under Armour</div>
+            <div class="brand-chip" onclick="filterByBrand('Reebok')">Reebok</div>
+            <div class="brand-chip" onclick="filterByBrand('Puma')">Puma</div>
+            <div class="brand-chip" onclick="filterByBrand('Jordan')">Jordan</div>
+            <div class="brand-chip" onclick="filterByBrand('New Balance')">New Balance</div>
+          </div>
+        </div>
+
+        <!-- Search Section -->
+        <div class="filter-section">
+          <div class="filter-title">🔍 Search by PO / TR / SI Number</div>
+          <div class="search-container">
+            <input 
+              type="text" 
+              id="searchInput" 
+              class="search-input" 
+              placeholder="Enter PO, TR, or SI number to search..."
+              oninput="searchReports()"
+            />
+            <button class="btn btn-ghost btn-small" onclick="clearSearch()">✕ Clear</button>
+          </div>
+          <div class="hint" id="searchHint" style="margin-top: 8px;"></div>
+        </div>
+
+        <!-- Date Filter Section -->
+        <div class="filter-section">
+          <div class="filter-title">📅 Filter by Date</div>
+          <div class="search-container">
+            <input 
+              type="date" 
+              id="dateFilterInput" 
+              class="search-input" 
+              onchange="filterByDate()"
+              style="max-width: 220px;"
+            />
+            <button class="btn btn-ghost btn-small" onclick="clearDateFilter()">✕ Clear</button>
+          </div>
+          <div class="hint" id="dateFilterHint" style="margin-top: 8px;"></div>
+        </div>
+
+        <div class="button-row">
+          <button class="btn btn-secondary" onclick="exportMonthToExcel()">📊 Export to Excel</button>
+        </div>
+
+        <div id="monthRecordsTable"></div>
+      </div>
+    </div>
+
+  <!-- EDIT REPORT PAGE -->
+    <div id="editReportPage" class="card hidden">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong>✏️ Edit Report</strong>
+            <span>Modify delivery details</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-secondary btn-small" onclick="cancelEdit()">⬅ Cancel</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-title">
+          <div>
+            <h2>✏️ Edit Delivery Report</h2>
+            <p>Update the details below and save changes.</p>
+          </div>
+        </div>
+
+        <div id="editSuccessMessage" class="toast hidden">✅ Report updated successfully!</div>
+
+        <form id="editDeliveryForm">
+          <!-- Sales Invoices -->
+          <div class="edit-form-section">
+            <div class="section-title">
+              📋 Sales Invoices
+              <button type="button" class="btn btn-secondary btn-small" onclick="addEditSI()">➕ Add</button>
+            </div>
+            <div id="editSiContainer"></div>
+          </div>
+
+          <div class="grid">
+            <div class="form-group">
+              <label for="editBrand">Brand *</label>
+              <select id="editBrand" required>
+                <option value="">Select Brand</option>
+                <option value="Nike">Nike</option>
+                <option value="Adidas">Adidas</option>
+                <option value="Under Armour">Under Armour</option>
+                <option value="Reebok">Reebok</option>
+                <option value="Puma">Puma</option>
+                <option value="Jordan">Jordan</option>
+                <option value="New Balance">New Balance</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="editTotalBoxes">Total Number of Boxes *</label>
+              <input type="number" id="editTotalBoxes" min="1" required />
+            </div>
+
+            <div class="form-group">
+              <label for="editDeliveryDate">Delivery Date *</label>
+              <input type="date" id="editDeliveryDate" required />
+            </div>
+
+            <div class="form-group">
+              <label for="editCategory">Delivery Category *</label>
+              <select id="editCategory" required onchange="toggleEditOtherCategory()">
+                <option value="">Select Category</option>
+                <option value="Shoes">Shoes</option>
+                <option value="Bags">Bags</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Others">Others</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group hidden" id="editOtherCategoryField">
+            <label for="editOtherCategory">Specify Other Category *</label>
+            <input type="text" id="editOtherCategory" placeholder="Please specify" />
+          </div>
+
+          <div class="form-group">
+            <label for="editRemarks">Remarks (Optional - for discrepancies)</label>
+            <textarea id="editRemarks" placeholder="Enter any discrepancies or notes"></textarea>
+          </div>
+
+          <div class="button-row">
+            <button class="btn btn-primary" type="submit">💾 Save Changes</button>
+            <button class="btn btn-ghost" type="button" onclick="cancelEdit()">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PASSWORD VERIFICATION MODAL -->
+  <div id="passwordModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-icon">🔒</span>
+        <h3>Authentication Required</h3>
+      </div>
+      <div class="modal-body">
+        <p>Please enter your password to edit this report. This ensures data security and prevents unauthorized changes.</p>
+        <div class="form-group">
+          <label for="editPassword">Password</label>
+          <input type="password" id="editPassword" placeholder="Enter your password" />
+        </div>
+        <div id="passwordError" class="error hidden">Incorrect password. Please try again.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="cancelPasswordModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="verifyPasswordAndEdit()">Verify & Edit</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- VIEW REPORT MODAL -->
+  <div class="modal-overlay hidden" id="viewReportModal" onclick="closeViewModal()">
+    <div class="modal-container" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <span class="modal-icon">📋</span>
+        <h3>Delivery Report Details</h3>
+      </div>
+      <div class="view-modal-body" id="viewReportContent"></div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeViewModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT ANNUAL DATA — PASSWORD MODAL -->
+  <div id="importPasswordModal" class="modal-overlay hidden">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-icon">🔒</span>
+        <h3>Authentication Required</h3>
+      </div>
+      <div class="modal-body">
+        <p>Please enter your password to import annual delivery data. This will add records into your local archives.</p>
+        <div class="form-group">
+          <label for="importPassword">Password</label>
+          <input type="password" id="importPassword" placeholder="Enter your password" />
+        </div>
+        <div id="importPasswordError" class="error hidden">Incorrect password. Please try again.</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="cancelImportPasswordModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="verifyImportPassword()">Verify & Choose File</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- IMPORT ANNUAL DATA — PREVIEW MODAL (filled dynamically) -->
+  <div id="importPreviewModal" class="modal-overlay hidden">
+    <div class="modal-content export-preview-modal">
+      <div class="modal-header">
+        <span class="modal-icon">📋</span>
+        <h3>Import Preview</h3>
+      </div>
+      <div class="modal-body export-preview-body" id="importPreviewBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="cancelImportPreview()">Cancel</button>
+        <button class="btn btn-primary" onclick="confirmImportAnnualData()">✅ Import Data</button>
+      </div>
+    </div>
+  </div>
+
+<script src="../js/db.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/navigation.js"></script>
+<script src="../js/direct-report.js"></script>
+<script src="../js/transfer-report.js"></script>
+<script src="../js/pullout-report.js"></script>
+<script src="../js/edit-report.js"></script>
+<script src="../js/archives.js"></script>
+<script src="../js/supplies.js"></script>
+<script src="../js/analytics.js"></script>
+<script src="../js/annual-analytics.js"></script>
+</body>
+</html>

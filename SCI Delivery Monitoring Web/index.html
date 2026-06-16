@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SCI DS San Lazaro - 6898</title>
+  <script>
+    // Root redirect: if authenticated go to dashboard, else to login
+    if (sessionStorage.getItem('authenticated')) {
+      window.location.replace('pages/dashboard.html');
+    } else {
+      window.location.replace('pages/index.html');
+    }
+  </script>
+</head>
+<body></body>
+</html>

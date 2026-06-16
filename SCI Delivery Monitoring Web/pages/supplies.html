@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Supplies Delivery | SCI DS San Lazaro - 6898</title>
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <link rel="shortcut icon" type="image/png" href="../images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/background.css">
+  <link rel="stylesheet" href="../css/tables.css">
+  <link rel="stylesheet" href="../css/modals.css">
+  <link rel="stylesheet" href="../css/analytics.css">
+  <link rel="stylesheet" href="../css/annual-analytics.css">
+</head>
+<body>
+<div class="clouds">
+  <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div><div class="cloud cloud-4"></div>
+  <div class="cloud cloud-5"></div><div class="cloud cloud-6"></div>
+</div>
+<div class="particles">
+  <div class="particle particle-1"></div><div class="particle particle-2"></div>
+  <div class="particle particle-3"></div><div class="particle particle-4"></div>
+  <div class="particle particle-5"></div><div class="particle particle-6"></div>
+  <div class="particle particle-7"></div><div class="particle particle-8"></div>
+</div>
+<div class="theme-transition-overlay" id="themeTransitionOverlay"></div>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <span class="sun-icon">☀️</span>
+  <span class="moon-icon">🌙</span>
+</button>
+
+<div class="app-wrap">
+  <!-- SUPPLIES DELIVERY REPORT -->
+    <div id="suppliesReportPage" class="card">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong>Supplies Delivery</strong>
+            <span>Record supplies delivery requests</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-secondary btn-small" onclick="showSuppliesRecords()">📊 View Records</button>
+          <button class="btn btn-secondary btn-small" onclick="showDashboard()">⬅ Back</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="page-title">
+          <div>
+            <h2>📦 New Supplies Delivery Report</h2>
+            <p>Record supplies delivery with request and item details.</p>
+          </div>
+        </div>
+
+        <div id="suppliesSuccessMessage" class="toast hidden">✅ Supplies report saved successfully!</div>
+
+        <form id="suppliesDeliveryForm">
+          <!-- Form 1: Request Details -->
+          <div class="form-section">
+            <h3>📋 Request Details</h3>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label for="suppliesRequestNumber">Request Number *</label>
+                <input type="text" id="suppliesRequestNumber" placeholder="Enter request number" required/>
+              </div>
+
+              <div class="form-group">
+                <label for="suppliesFrom">From *</label>
+                <input type="text" id="suppliesFrom" placeholder="Source/Sender" required/>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="suppliesRequestDate">Request Date *</label>
+                <input type="date" id="suppliesRequestDate" required/>
+              </div>
+
+              <div class="form-group">
+                <label for="suppliesReceiveDate">Receive Date *</label>
+                <input type="date" id="suppliesReceiveDate" required/>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="suppliesStatus">Status *</label>
+                <select id="suppliesStatus" required>
+                  <option value="">Select status</option>
+                  <option value="Fulfilled">Fulfilled</option>
+                  <option value="Partial Fulfilled">Partial Fulfilled</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Form 2: Items -->
+          <div class="form-section">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom: 10px;">
+              <div>
+                <h3>📦 Items</h3>
+                <div class="hint">Add all items in this delivery.</div>
+              </div>
+              <button type="button" class="btn btn-secondary" onclick="addSuppliesItem()">➕ Add Item</button>
+            </div>
+
+            <div id="suppliesItemsContainer"></div>
+          </div>
+
+          <!-- Remarks -->
+          <div class="form-section">
+            <div class="form-group">
+              <label for="suppliesRemarks">Remarks</label>
+              <textarea id="suppliesRemarks" placeholder="Additional notes or comments" rows="3"></textarea>
+            </div>
+          </div>
+
+          <!-- Summary Section -->
+          <div class="form-section" id="suppliesSummarySection" style="background: linear-gradient(135deg, rgba(255, 150, 79, 0.1), rgba(255, 120, 50, 0.05)); padding: 20px; border-radius: 12px; border: 2px solid var(--border);">
+            <h3>💰 Summary</h3>
+            <div class="summary-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px;">
+              <div class="summary-item">
+                <div class="summary-label">Total Items</div>
+                <div class="summary-value" id="suppliesTotalItems">0</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Total Request QTY</div>
+                <div class="summary-value" id="suppliesTotalRequestQty">0</div>
+              </div>
+              <div class="summary-item">
+                <div class="summary-label">Total Issued QTY</div>
+                <div class="summary-value" id="suppliesTotalIssuedQty">0</div>
+              </div>
+              <div class="summary-item highlight">
+                <div class="summary-label">Total Price</div>
+                <div class="summary-value" id="suppliesTotalPrice">₱0.00</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="button-row">
+            <button type="button" class="btn btn-primary" onclick="saveSuppliesReport()">💾 Save Report</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  <!-- SUPPLIES RECORDS PAGE -->
+    <div id="suppliesRecordsPage" class="card hidden">
+      <div class="topbar">
+        <div class="brand">
+          <img src="../images/logo.png" alt="Logo"/>
+          <div class="title">
+            <strong>Supplies Records</strong>
+            <span>View and analyze supplies deliveries</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-secondary btn-small" onclick="backToSuppliesForm()">⬅ Back to Form</button>
+          <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- Filters -->
+        <div class="filters-section" style="display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+          <div class="form-group" style="min-width: 150px;">
+            <label for="suppliesFilterYear">Year</label>
+            <select id="suppliesFilterYear" onchange="loadSuppliesRecords()">
+              <option value="">Select Year</option>
+            </select>
+          </div>
+          <div class="form-group" style="min-width: 150px;">
+            <label for="suppliesFilterMonth">Month</label>
+            <select id="suppliesFilterMonth" onchange="loadSuppliesRecords()">
+              <option value="">Select Month</option>
+              <option value="January">January</option>
+              <option value="February">February</option>
+              <option value="March">March</option>
+              <option value="April">April</option>
+              <option value="May">May</option>
+              <option value="June">June</option>
+              <option value="July">July</option>
+              <option value="August">August</option>
+              <option value="September">September</option>
+              <option value="October">October</option>
+              <option value="November">November</option>
+              <option value="December">December</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="analytics-metrics" id="suppliesRecordsSummary" style="margin-bottom: 32px;">
+          <div class="metric-card">
+            <div class="metric-icon">📦</div>
+            <div class="metric-info">
+              <div class="metric-label">Total Deliveries</div>
+              <div class="metric-value" id="suppliesMetricDeliveries">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">📊</div>
+            <div class="metric-info">
+              <div class="metric-label">Total Items</div>
+              <div class="metric-value" id="suppliesMetricItems">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon">📈</div>
+            <div class="metric-info">
+              <div class="metric-label">Total Issued QTY</div>
+              <div class="metric-value" id="suppliesMetricQty">0</div>
+            </div>
+          </div>
+          <div class="metric-card highlight">
+            <div class="metric-icon">💰</div>
+            <div class="metric-info">
+              <div class="metric-label">Total Value</div>
+              <div class="metric-value" id="suppliesMetricValue">₱0</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="charts-grid" id="suppliesChartsSection" style="margin-bottom: 32px;">
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>📊 Status Distribution</h3>
+              <p>Fulfilled vs Partial Fulfilled</p>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="suppliesStatusChart"></canvas>
+            </div>
+          </div>
+
+          <div class="chart-container">
+            <div class="chart-header">
+              <h3>💰 Value by Request</h3>
+              <p>Total value per request</p>
+            </div>
+            <div class="chart-wrapper">
+              <canvas id="suppliesValueChart"></canvas>
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-section">
+          <h3 style="margin-bottom: 16px;">📋 Delivery Records</h3>
+          <div id="suppliesRecordsTable"></div>
+        </div>
+      </div>
+    </div>
+
+</div>
+
+
+<script src="../js/db.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/navigation.js"></script>
+<script src="../js/direct-report.js"></script>
+<script src="../js/transfer-report.js"></script>
+<script src="../js/pullout-report.js"></script>
+<script src="../js/edit-report.js"></script>
+<script src="../js/archives.js"></script>
+<script src="../js/supplies.js"></script>
+<script src="../js/analytics.js"></script>
+<script src="../js/annual-analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,311 @@
+/* ================================
+   ANALYTICS PAGE
+   ================================ */
+
+.analytics-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.metric-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  transition: all .3s ease;
+  min-width: 0; /* Fix overflow */
+  overflow: hidden; /* Prevent content overflow */
+}
+
+.metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(255, 150, 79, 0.2);
+}
+
+.metric-card.highlight {
+  background: linear-gradient(135deg, rgb(255, 150, 79), rgb(255, 120, 50));
+  border-color: rgb(255, 120, 50);
+}
+
+.metric-icon {
+  font-size: 36px;
+  line-height: 1;
+  flex-shrink: 0; /* Prevent icon from shrinking */
+}
+
+.metric-info {
+  flex: 1;
+  min-width: 0; /* Allow text to wrap/truncate */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.metric-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #78716c;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  white-space: nowrap; /* Keep label on one line */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ... if too long */
+}
+
+.metric-value {
+  font-size: 20px; /* Smaller to fit long numbers */
+  font-weight: 900;
+  color: var(--text);
+  white-space: nowrap; /* Prevent line breaks */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Add ... if too long */
+  line-height: 1.2;
+}
+
+/* Smaller font for highlight card to ensure fit */
+.metric-card.highlight .metric-value {
+  font-size: 18px;
+}
+
+.metric-card.highlight .metric-label {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.metric-card.highlight .metric-value {
+  color: #fff;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+  gap: 24px;
+}
+
+.chart-container {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.chart-container.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-header {
+  margin-bottom: 16px;
+}
+
+.chart-header h3 {
+  font-size: 16px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0 0 4px 0;
+}
+
+.chart-header p {
+  font-size: 13px;
+  color: #78716c;
+  margin: 0;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 300px;
+}
+
+.chart-container.full-width .chart-wrapper {
+  height: 350px;
+}
+
+/* Top Performers List */
+.top-performers-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.performer-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  background: #f8fafc;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.performer-rank {
+  font-size: 20px;
+  font-weight: 900;
+  color: rgb(255, 150, 79);
+  margin-right: 12px;
+}
+
+.performer-info {
+  flex: 1;
+}
+
+.performer-brand {
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 2px;
+}
+
+.performer-details {
+  font-size: 12px;
+  color: #78716c;
+}
+
+.performer-score {
+  font-size: 16px;
+  font-weight: 900;
+  color: #16a34a;
+}
+
+/* Dark Mode */
+[data-theme="dark"] .metric-card {
+  background: #292524;
+}
+
+[data-theme="dark"] .metric-label {
+  color: #a8a29e;
+}
+
+[data-theme="dark"] .metric-value {
+  color: #fafaf9;
+}
+
+[data-theme="dark"] .performer-item {
+  background: #1c1917;
+}
+
+[data-theme="dark"] .chart-header p {
+  color: #a8a29e;
+}
+
+/* Mobile adjustments */
+@media (max-width: 900px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .chart-wrapper {
+    height: 250px;
+  }
+}
+
+@media (max-width: 600px) {
+  .analytics-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+  
+  .metric-value {
+    font-size: 22px;
+  }
+}
+
+/* Prevent flash during theme transition */
+body.theme-transitioning {
+  overflow: hidden;
+}
+
+.theme-transition-overlay.active {
+  background: transparent;
+}
+
+/* Total Value card without icon - center the text */
+.metric-card.highlight .metric-info {
+  text-align: center;
+}
+
+.metric-card.highlight .metric-label {
+  margin-bottom: 8px;
+}
+
+.metric-card.highlight .metric-value {
+  font-size: 22px; /* Slightly larger since there's more space */
+}
+
+/* Row number column styling */
+table th:first-child,
+table td:first-child {
+  width: 50px;
+  text-align: center;
+  font-weight: 700;
+  color: rgb(255, 150, 79);
+}
+
+[data-theme="dark"] table th:first-child,
+[data-theme="dark"] table td:first-child {
+  color: rgb(255, 150, 79);
+}
+
+/* Clickable table rows */
+table tbody tr[onclick] {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+table tbody tr[onclick]:hover {
+  background-color: rgba(255, 150, 79, 0.1) !important;
+}
+
+[data-theme="dark"] table tbody tr[onclick]:hover {
+  background-color: rgba(255, 150, 79, 0.15) !important;
+}
+
+/* Fix summary card text wrapping */
+.summary-card .summary-value {
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+}
+
+/* ================================
+   SUPPLIES SUMMARY SECTION
+   ================================ */
+
+.summary-item {
+  text-align: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 8px;
+}
+
+[data-theme="dark"] .summary-item {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.summary-item.highlight {
+  background: linear-gradient(135deg, rgb(255, 150, 79), rgb(255, 120, 50));
+  color: white;
+}
+
+.summary-item .summary-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.summary-item .summary-value {
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.summary-item.highlight .summary-label,
+.summary-item.highlight .summary-value {
+  color: white;
+}
