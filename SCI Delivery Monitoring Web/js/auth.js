@@ -1,27 +1,160 @@
-// Auth: login, logout, requireAuth
+// ============================================================
+// auth.js — Multi-account authentication
+// Uses bcryptjs (CDN) to verify passwords against hashed values.
+// Session stored in sessionStorage: cleared when tab closes.
+// ============================================================
 
-// Session stored in sessionStorage (stays within tab, cleared on close)
-function _authGet()   { try { return sessionStorage.getItem('authenticated'); } catch(e){ return localStorage.getItem('authenticated'); } }
-function _authSet()   { try { sessionStorage.setItem('authenticated','1');    } catch(e){ localStorage.setItem('authenticated','1'); } }
-function _authClear() { try { sessionStorage.removeItem('authenticated');      } catch(e){ localStorage.removeItem('authenticated'); } }
+// ── Account registry ────────────────────────────────────────
+// Passwords are bcrypt hashes of '1234' (cost factor 10).
+// Generated with: bcrypt.hashSync('1234', 10)
+const ACCOUNTS = {
+  dssnl: {
+    hash:       '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u',
+    branchName: 'DS San Lazaro',
+    branchCode: '6898',
+    label:      'SCI DS San Lazaro - 6898'
+  },
+  dsmnl: {
+    hash:       '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u',
+    branchName: 'DS Manila',
+    branchCode: '6891',
+    label:      'SCI DS Manila - 6891'
+  },
+  dsgc: {
+    hash:       '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u',
+    branchName: 'DS Grand Central',
+    branchCode: '6119',
+    label:      'SCI DS Grand Central - 6119'
+  },
+  dsstm: {
+    hash:       '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u',
+    branchName: 'DS ST. Mesa',
+    branchCode: '5',
+    label:      'SCI DS ST. Mesa - 5'
+  },
+  dsfvw: {
+    hash:       '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u',
+    branchName: 'DS Fairview',
+    branchCode: '8',
+    label:      'SCI DS Fairview - 8'
+  },
+  dsqpo: {
+    hash:       '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LPVNugQ3e6u',
+    branchName: 'DS Quiapo',
+    branchCode: '2',
+    label:      'SCI DS Quiapo - 2'
+  }
+};
 
-const PAGE = window.location.pathname.split('/').pop() || 'index.html';
+// ── Session helpers ─────────────────────────────────────────
+function _sessionGet()   {
+  try { return JSON.parse(sessionStorage.getItem('sci_user')); } catch(e) { return null; }
+}
+function _sessionSet(user) {
+  try { sessionStorage.setItem('sci_user', JSON.stringify(user)); } catch(e) {}
+}
+function _sessionClear() {
+  try { sessionStorage.removeItem('sci_user'); } catch(e) {}
+}
 
-function login() {
-  const username = document.getElementById('username')?.value || '';
-  const password = document.getElementById('password')?.value || '';
-  if (username === 'dssnl' && password === PASSWORD) {
-    _authSet();
-    window.location.href = 'dashboard.html';
-  } else {
-    document.getElementById('loginError')?.classList.remove('hidden');
+/** Returns the currently logged-in user object or null. */
+function getCurrentUser() {
+  return _sessionGet();
+}
+
+/** Returns the branch_id (username) of the current user, used for DB filtering. */
+function getCurrentBranchId() {
+  const u = _sessionGet();
+  return u ? u.username : null;
+}
+
+// ── Login ───────────────────────────────────────────────────
+async function login() {
+  const usernameEl = document.getElementById('username');
+  const passwordEl = document.getElementById('password');
+  const errorEl    = document.getElementById('loginError');
+  const btnEl      = document.querySelector('.btn-primary');
+
+  const username = (usernameEl?.value || '').trim().toLowerCase();
+  const password = passwordEl?.value || '';
+
+  if (!username || !password) {
+    if (errorEl) { errorEl.textContent = 'Please enter username and password.'; errorEl.classList.remove('hidden'); }
+    return;
+  }
+
+  const account = ACCOUNTS[username];
+  if (!account) {
+    if (errorEl) { errorEl.textContent = 'Invalid username or password.'; errorEl.classList.remove('hidden'); }
+    return;
+  }
+
+  // Show loading state
+  if (btnEl) { btnEl.disabled = true; btnEl.textContent = '⏳ Verifying...'; }
+  if (errorEl) errorEl.classList.add('hidden');
+
+  try {
+    const match = await bcrypt.compare(password, account.hash);
+    if (match) {
+      _sessionSet({
+        username:   username,
+        branchName: account.branchName,
+        branchCode: account.branchCode,
+        label:      account.label
+      });
+      window.location.href = 'dashboard.html';
+    } else {
+      if (errorEl) { errorEl.textContent = 'Invalid username or password.'; errorEl.classList.remove('hidden'); }
+      if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🔐 Login'; }
+    }
+  } catch(err) {
+    console.error('Login error:', err);
+    if (errorEl) { errorEl.textContent = 'Login error. Please try again.'; errorEl.classList.remove('hidden'); }
+    if (btnEl) { btnEl.disabled = false; btnEl.textContent = '🔐 Login'; }
   }
 }
 
+// ── Auth guard ──────────────────────────────────────────────
+const PAGE = window.location.pathname.split('/').pop() || 'index.html';
+
 function requireAuth() {
-  if (!_authGet() && PAGE !== 'index.html') window.location.href = 'index.html';
+  if (!_sessionGet() && PAGE !== 'index.html') {
+    window.location.href = 'index.html';
+  }
 }
 
+// ── Logout ──────────────────────────────────────────────────
+function logout() {
+  _sessionClear();
+  window.location.href = 'index.html';
+}
+
+// ── Apply branch info to current page ───────────────────────
+function applyBranchInfo() {
+  const user = _sessionGet();
+  if (!user) return;
+
+  // Update <title>
+  const prefix = document.title.split('|')[0].trim(); // e.g. "Dashboard"
+  document.title = prefix ? `${prefix} | ${user.label}` : user.label;
+
+  // Update all elements with data-branch-label
+  document.querySelectorAll('[data-branch-label]').forEach(el => {
+    el.textContent = user.label;
+  });
+
+  // Update all elements with data-branch-name
+  document.querySelectorAll('[data-branch-name]').forEach(el => {
+    el.textContent = user.branchName;
+  });
+
+  // Update all elements with data-branch-code
+  document.querySelectorAll('[data-branch-code]').forEach(el => {
+    el.textContent = user.branchCode;
+  });
+}
+
+// ── Navigation helpers (unchanged API) ─────────────────────
 function showDashboard()  { window.location.href = 'dashboard.html'; }
 function showArchives()   { window.location.href = 'archives.html'; }
 
@@ -31,11 +164,11 @@ function showDeliveryForm(type) {
   if (map[type]) window.location.href = map[type];
 }
 
-function logout() { _authClear(); window.location.href = 'index.html'; }
-
+// ── DOMContentLoaded ────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', async function () {
   requireAuth();
   loadTheme();
+  applyBranchInfo();
 
   // ── Login page ──
   document.getElementById('password')?.addEventListener('keypress', e => { if(e.key==='Enter') login(); });
