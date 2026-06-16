@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Direct Delivery | SCI DS San Lazaro - 6898</title>
+  <link rel="icon" type="image/png" href="../images/logo.png">
+  <link rel="shortcut icon" type="image/png" href="../images/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="../css/base.css">
+  <link rel="stylesheet" href="../css/background.css">
+  <link rel="stylesheet" href="../css/tables.css">
+  <link rel="stylesheet" href="../css/modals.css">
+  <link rel="stylesheet" href="../css/analytics.css">
+  <link rel="stylesheet" href="../css/annual-analytics.css">
+</head>
+<body>
+<div class="clouds">
+  <div class="cloud cloud-1"></div><div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div><div class="cloud cloud-4"></div>
+  <div class="cloud cloud-5"></div><div class="cloud cloud-6"></div>
+</div>
+<div class="particles">
+  <div class="particle particle-1"></div><div class="particle particle-2"></div>
+  <div class="particle particle-3"></div><div class="particle particle-4"></div>
+  <div class="particle particle-5"></div><div class="particle particle-6"></div>
+  <div class="particle particle-7"></div><div class="particle particle-8"></div>
+</div>
+<div class="theme-transition-overlay" id="themeTransitionOverlay"></div>
+<button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle dark mode">
+  <span class="sun-icon">☀️</span>
+  <span class="moon-icon">🌙</span>
+</button>
+
+<div class="app-wrap">
+  <!-- DIRECT DELIVERY REPORT -->
+  <div id="newReportPage" class="card">
+    <div class="topbar">
+      <div class="brand">
+        <img src="../images/logo.png" alt="Logo"/>
+        <div class="title">
+          <strong>Direct Delivery</strong>
+          <span>Record direct deliveries from suppliers</span>
+        </div>
+      </div>
+
+      <div class="top-actions">
+        <button class="btn btn-secondary btn-small" onclick="showDashboard()">⬅ Back</button>
+        <button class="btn btn-ghost btn-small" onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-title">
+        <div>
+          <h2>🚚 New Direct Delivery Report</h2>
+          <p>Encode direct deliveries with PO and SI numbers.</p>
+        </div>
+      </div>
+
+      <div id="successMessage" class="toast hidden">✅ Report saved successfully!</div>
+
+      <form id="deliveryForm">
+        <!-- Sales Invoices -->
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom: 10px;">
+          <div>
+            <strong style="font-size:14px;">Sales Invoices</strong>
+            <div class="hint">You can add multiple SI entries per delivery.</div>
+          </div>
+          <button type="button" class="btn btn-secondary" onclick="addSI()">➕ Add Sales Invoice</button>
+        </div>
+
+        <div id="siContainer"></div>
+
+        <div class="grid">
+          <div class="form-group">
+            <label for="brand">Brand *</label>
+            <select id="brand" required>
+              <option value="">Select Brand</option>
+              <option value="Nike">Nike</option>
+              <option value="Adidas">Adidas</option>
+              <option value="Under Armour">Under Armour</option>
+              <option value="Reebok">Reebok</option>
+              <option value="Puma">Puma</option>
+              <option value="Jordan">Jordan</option>
+              <option value="New Balance">New Balance</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="totalBoxes">Total Number of Boxes *</label>
+            <input type="number" id="totalBoxes" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label for="deliveryDate">Delivery Date *</label>
+            <input type="date" id="deliveryDate" required />
+          </div>
+
+          <div class="form-group">
+            <label for="category">Delivery Category *</label>
+            <select id="category" required onchange="toggleOtherCategory()">
+              <option value="">Select Category</option>
+              <option value="Shoes">Shoes</option>
+              <option value="Bags">Bags</option>
+              <option value="Apparel">Apparel</option>
+              <option value="Others">Others</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group hidden" id="otherCategoryField">
+          <label for="otherCategory">Specify Other Category *</label>
+          <input type="text" id="otherCategory" placeholder="Please specify" />
+        </div>
+
+        <div class="form-group">
+          <label for="remarks">Remarks (Optional - for discrepancies)</label>
+          <textarea id="remarks" placeholder="Enter any discrepancies or notes"></textarea>
+        </div>
+
+        <div class="button-row">
+          <button class="btn btn-primary" type="submit">💾 Save Report</button>
+          <button class="btn btn-secondary" type="button" onclick="resetForm()">🧹 Clear Form</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="../js/bcrypt.min.js"></script>
+
+<script src="../js/db.js"></script>
+<script src="../js/core.js"></script>
+<script src="../js/auth.js"></script>
+<script src="../js/navigation.js"></script>
+<script src="../js/direct-report.js"></script>
+<script src="../js/transfer-report.js"></script>
+<script src="../js/pullout-report.js"></script>
+<script src="../js/edit-report.js"></script>
+<script src="../js/archives.js"></script>
+<script src="../js/supplies.js"></script>
+<script src="../js/analytics.js"></script>
+<script src="../js/annual-analytics.js"></script>
+<script>
+  // Render the first Sales Invoice entry on load (mirrors resetForm() behavior)
+  document.addEventListener('DOMContentLoaded', () => {
+    if (document.getElementById('siContainer')) addSI();
+  });
+</script>
+</body>
+</html>
